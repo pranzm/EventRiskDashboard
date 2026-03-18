@@ -158,12 +158,14 @@ async function loadNews(category, bodyId, riskId) {
     let html = '';
     if (data.articles && data.articles.length > 0) {
       data.articles.forEach(article => {
+        const safeUrl = article.url && article.url !== '#' ? article.url : null;
         html += `
-          <div class="news-item">
-            <div class="news-title"><a href="${article.url}" target="_blank" rel="noopener">${article.title}</a></div>
+          <div class="news-item ${safeUrl ? 'news-item-link' : ''}" ${safeUrl ? `onclick="window.open('${safeUrl}', '_blank')"` : ''}>
+            <div class="news-title">${article.title}</div>
             <div class="news-meta">
               <span>${article.source}</span>
               <span>${timeAgo(article.publishedAt)}</span>
+              ${safeUrl ? '<span class="news-open">Open ↗</span>' : ''}
             </div>
             ${article.description ? `<div class="news-description">${article.description}</div>` : ''}
           </div>
@@ -255,6 +257,56 @@ async function addSales(type) {
     }
   } catch (error) {
     alert('Failed to update sales');
+  }
+}
+
+function editSales(type) {
+  const label = type === 'online' ? 'Online' : 'Offline';
+  const currentEl = document.getElementById(type === 'online' ? 'onlineAmount' : 'offlineAmount');
+  const currentText = currentEl.textContent.replace(/[^0-9]/g, '');
+  const newAmount = prompt(`Edit ${label} Sales Total (in rupees):`, currentText);
+  if (newAmount !== null && newAmount !== '') {
+    const amount = parseFloat(newAmount);
+    if (!isNaN(amount) && amount >= 0) {
+      setSalesDirectly(type, amount);
+    } else {
+      alert('Please enter a valid positive number');
+    }
+  }
+}
+
+async function setSalesDirectly(type, amount) {
+  try {
+    const res = await fetch('/api/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, amount })
+    });
+    const data = await res.json();
+    if (data.success) {
+      updateSalesUI(data.sales);
+    }
+  } catch (error) {
+    alert('Failed to update sales');
+  }
+}
+
+async function resetSales(type) {
+  const label = type === 'online' ? 'Online' : 'Offline';
+  if (!confirm(`Reset ${label} Sales to zero? This cannot be undone.`)) return;
+
+  try {
+    const res = await fetch('/api/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, amount: 0 })
+    });
+    const data = await res.json();
+    if (data.success) {
+      updateSalesUI(data.sales);
+    }
+  } catch (error) {
+    alert('Failed to reset sales');
   }
 }
 

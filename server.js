@@ -188,26 +188,26 @@ app.get('/api/news/:category', async (req, res) => {
       const demoData = {
         war: {
           articles: [
-            { title: 'Global tensions remain elevated amid ongoing conflicts', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'Multiple regions continue to see military activity...' },
-            { title: 'Peace talks progress in Eastern Europe diplomatic efforts', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'Diplomatic channels remain active...' },
-            { title: 'Middle East ceasefire negotiations enter new phase', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'International mediators push for resolution...' }
+            { title: 'Global tensions remain elevated amid ongoing conflicts', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=war%20military%20conflict', description: 'Multiple regions continue to see military activity...' },
+            { title: 'Peace talks progress in Eastern Europe diplomatic efforts', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=peace%20talks%20Europe', description: 'Diplomatic channels remain active...' },
+            { title: 'Middle East ceasefire negotiations enter new phase', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=Middle%20East%20ceasefire', description: 'International mediators push for resolution...' }
           ],
           risk_level: 'MEDIUM',
           note: 'Demo data - Add GNEWS_API_KEY to .env for live news'
         },
         lpg: {
           articles: [
-            { title: 'LPG prices revised for April 2026 in India', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'Government announces new LPG cylinder prices...' },
-            { title: 'Subsidized LPG distribution reaches new milestone', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'PM Ujjwala Yojana continues expansion...' },
-            { title: 'Commercial LPG cylinder prices see adjustment', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'Commercial cylinder rates updated...' }
+            { title: 'LPG prices revised for April 2026 in India', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=LPG%20price%20India%202026', description: 'Government announces new LPG cylinder prices...' },
+            { title: 'Subsidized LPG distribution reaches new milestone', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=LPG%20subsidy%20India', description: 'PM Ujjwala Yojana continues expansion...' },
+            { title: 'Commercial LPG cylinder prices see adjustment', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=commercial%20LPG%20India', description: 'Commercial cylinder rates updated...' }
           ],
           risk_level: 'LOW',
           note: 'Demo data - Add GNEWS_API_KEY to .env for live news'
         },
         concerts: {
           articles: [
-            { title: 'Several Bengaluru events rescheduled for April', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'Multiple event organizers adjust schedules...' },
-            { title: 'Bengaluru nightlife and event scene update for March 2026', source: 'Demo', publishedAt: new Date().toISOString(), url: '#', description: 'The city entertainment landscape...' }
+            { title: 'Several Bengaluru events rescheduled for April', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=Bengaluru%20events%20cancelled%20April%202026', description: 'Multiple event organizers adjust schedules...' },
+            { title: 'Bengaluru nightlife and event scene update for March 2026', source: 'Google News', publishedAt: new Date().toISOString(), url: 'https://news.google.com/search?q=Bengaluru%20concert%20cancelled%20March%202026', description: 'The city entertainment landscape...' }
           ],
           risk_level: 'LOW',
           note: 'Demo data - Add GNEWS_API_KEY to .env for live news'

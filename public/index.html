@@ -100,7 +100,13 @@
       </div>
       <div class="widget-body">
         <div class="sales-display">
-          <div class="sales-amount" id="onlineAmount">0</div>
+          <div class="sales-amount-row">
+            <div class="sales-amount" id="onlineAmount">0</div>
+            <div class="sales-actions">
+              <button class="btn-edit" onclick="editSales('online')" title="Edit total">Edit</button>
+              <button class="btn-reset" onclick="resetSales('online')" title="Reset to zero">Reset</button>
+            </div>
+          </div>
           <div class="sales-progress-container">
             <div class="sales-progress-bar" id="onlineProgressBar" style="width: 0%"></div>
           </div>
@@ -124,7 +130,13 @@
       </div>
       <div class="widget-body">
         <div class="sales-display">
-          <div class="sales-amount" id="offlineAmount">0</div>
+          <div class="sales-amount-row">
+            <div class="sales-amount" id="offlineAmount">0</div>
+            <div class="sales-actions">
+              <button class="btn-edit" onclick="editSales('offline')" title="Edit total">Edit</button>
+              <button class="btn-reset" onclick="resetSales('offline')" title="Reset to zero">Reset</button>
+            </div>
+          </div>
           <div class="sales-progress-container">
             <div class="sales-progress-bar" id="offlineProgressBar" style="width: 0%"></div>
           </div>
