@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASOB Event Risk Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <h1>ASOB Event Risk Dashboard</h1>
+      <span class="event-date">Event: April 5, 2026</span>
+    </div>
+    <div class="header-right">
+      <div class="countdown" id="countdown"></div>
+      <div class="overall-risk" id="overallRisk">
+        <span class="risk-label">OVERALL RISK</span>
+        <span class="risk-badge" id="overallRiskBadge">LOADING</span>
+      </div>
+      <button class="refresh-btn" onclick="refreshAll()">Refresh All</button>
+    </div>
+  </header>
+
+  <!-- Dashboard Grid -->
+  <main class="dashboard">
+
+    <!-- Weather Widget -->
+    <section class="widget weather-widget" id="weatherWidget">
+      <div class="widget-header">
+        <h2>Weather Forecast - Bengaluru</h2>
+        <span class="risk-badge small" id="weatherRisk">--</span>
+      </div>
+      <div class="widget-body" id="weatherBody">
+        <div class="loading">Loading weather data...</div>
+      </div>
+    </section>
+
+    <!-- Indian Market Widget -->
+    <section class="widget market-widget" id="indianMarketWidget">
+      <div class="widget-header">
+        <h2>Indian Markets</h2>
+        <span class="risk-badge small" id="marketRisk">--</span>
+      </div>
+      <div class="widget-body" id="indianMarketBody">
+        <div class="loading">Loading market data...</div>
+      </div>
+    </section>
+
+    <!-- US Market Widget -->
+    <section class="widget market-widget" id="usMarketWidget">
+      <div class="widget-header">
+        <h2>US Markets</h2>
+        <span class="risk-badge small" id="usMarketRisk">--</span>
+      </div>
+      <div class="widget-body" id="usMarketBody">
+        <div class="loading">Loading market data...</div>
+      </div>
+    </section>
+
+    <!-- War News Widget -->
+    <section class="widget news-widget" id="warWidget">
+      <div class="widget-header">
+        <h2>Global Conflict News</h2>
+        <span class="risk-badge small" id="warRisk">--</span>
+      </div>
+      <div class="widget-body" id="warBody">
+        <div class="loading">Loading news...</div>
+      </div>
+    </section>
+
+    <!-- LPG News Widget -->
+    <section class="widget news-widget" id="lpgWidget">
+      <div class="widget-header">
+        <h2>LPG News - India</h2>
+        <span class="risk-badge small" id="lpgRisk">--</span>
+      </div>
+      <div class="widget-body" id="lpgBody">
+        <div class="loading">Loading news...</div>
+      </div>
+    </section>
+
+    <!-- Concert Cancellation Widget -->
+    <section class="widget news-widget" id="concertWidget">
+      <div class="widget-header">
+        <h2>Bengaluru Concert Cancellations</h2>
+        <span class="risk-badge small" id="concertRisk">--</span>
+      </div>
+      <div class="widget-body" id="concertBody">
+        <div class="loading">Loading news...</div>
+      </div>
+    </section>
+
+    <!-- Online Sales Tracker -->
+    <section class="widget sales-widget" id="onlineSalesWidget">
+      <div class="widget-header">
+        <h2>Online Sales Tracker</h2>
+        <span class="target-label">Target: 50,00,000</span>
+      </div>
+      <div class="widget-body">
+        <div class="sales-display">
+          <div class="sales-amount" id="onlineAmount">0</div>
+          <div class="sales-progress-container">
+            <div class="sales-progress-bar" id="onlineProgressBar" style="width: 0%"></div>
+          </div>
+          <div class="sales-percentage" id="onlinePercentage">0% of target</div>
+        </div>
+        <div class="sales-input-group">
+          <div class="input-row">
+            <input type="number" id="onlineInput" placeholder="Enter amount in rupees" min="0">
+            <button class="btn-set" onclick="setSales('online')">Set Total</button>
+            <button class="btn-add" onclick="addSales('online')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Offline Sales Tracker -->
+    <section class="widget sales-widget" id="offlineSalesWidget">
+      <div class="widget-header">
+        <h2>Offline Sales Tracker</h2>
+        <span class="target-label">Target: 10,00,000</span>
+      </div>
+      <div class="widget-body">
+        <div class="sales-display">
+          <div class="sales-amount" id="offlineAmount">0</div>
+          <div class="sales-progress-container">
+            <div class="sales-progress-bar" id="offlineProgressBar" style="width: 0%"></div>
+          </div>
+          <div class="sales-percentage" id="offlinePercentage">0% of target</div>
+        </div>
+        <div class="sales-input-group">
+          <div class="input-row">
+            <input type="number" id="offlineInput" placeholder="Enter amount in rupees" min="0">
+            <button class="btn-set" onclick="setSales('offline')">Set Total</button>
+            <button class="btn-add" onclick="addSales('offline')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>ASOB Event Risk Dashboard | Auto-refreshes every 5 minutes</span>
+    <span id="lastUpdated">Last updated: --</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
