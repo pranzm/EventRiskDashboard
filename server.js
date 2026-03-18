@@ -15,6 +15,15 @@ let salesData = {
   offline: { current: 0, target: 1000000, history: [] }
 };
 
+// In-memory store for financial data
+let financialData = {
+  artistCost: 0,
+  productionCost: 0,
+  marketingExpenses: 0,
+  flightExpenses: 0,
+  sponsorEarnings: 0
+};
+
 // ============ WEATHER API ============
 app.get('/api/weather', async (req, res) => {
   try {
@@ -106,60 +115,76 @@ app.get('/api/weather', async (req, res) => {
 });
 
 // ============ MARKET DATA API ============
+async function fetchYahooSymbol(s) {
+  try {
+    const response = await fetch(
+      `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s.symbol)}?interval=1d&range=5d`,
+      { headers: { 'User-Agent': 'Mozilla/5.0' } }
+    );
+    const data = await response.json();
+    const result = data.chart?.result?.[0];
+    if (result) {
+      const meta = result.meta;
+      const prevClose = meta.chartPreviousClose || meta.previousClose;
+      const price = meta.regularMarketPrice;
+      const change = price - prevClose;
+      const changePercent = (change / prevClose) * 100;
+      return { ...s, price: price.toFixed(2), change: change.toFixed(2), changePercent: changePercent.toFixed(2), status: 'live' };
+    }
+    throw new Error('No data');
+  } catch {
+    return { ...s, price: '--', change: '--', changePercent: '--', status: 'unavailable' };
+  }
+}
+
+function marketRisk(items) {
+  const live = items.filter(m => m.status === 'live');
+  if (!live.length) return 'UNKNOWN';
+  const avg = live.reduce((s, m) => s + parseFloat(m.changePercent || 0), 0) / live.length;
+  return avg < -2 ? 'HIGH' : avg < -0.5 ? 'MEDIUM' : 'LOW';
+}
+
 app.get('/api/markets', async (req, res) => {
   try {
-    // Use Yahoo Finance API via public endpoint
-    const symbols = [
-      { symbol: '^NSEI', name: 'NIFTY 50', market: 'IN' },
-      { symbol: '^BSESN', name: 'SENSEX', market: 'IN' },
-      { symbol: '^DJI', name: 'DOW JONES', market: 'US' },
-      { symbol: '^GSPC', name: 'S&P 500', market: 'US' },
-      { symbol: '^IXIC', name: 'NASDAQ', market: 'US' }
+    const allSymbols = [
+      { symbol: '^NSEI',    name: 'NIFTY 50',    market: 'IN' },
+      { symbol: '^BSESN',   name: 'SENSEX',       market: 'IN' },
+      { symbol: '^DJI',     name: 'DOW JONES',    market: 'US' },
+      { symbol: '^GSPC',    name: 'S&P 500',      market: 'US' },
+      { symbol: '^IXIC',    name: 'NASDAQ',       market: 'US' },
+      { symbol: '^N225',    name: 'NIKKEI 225',   market: 'AS' },
+      { symbol: '^HSI',     name: 'HANG SENG',    market: 'AS' },
+      { symbol: '000001.SS',name: 'SHANGHAI',     market: 'AS' },
+      { symbol: '^TASI',    name: 'SAUDI TASI',   market: 'ME' },
+      { symbol: '^DFMGI',   name: 'DUBAI DFM',    market: 'ME' },
+      { symbol: 'GC=F',     name: 'GOLD',         market: 'CMD', unit: '$/oz' },
+      { symbol: 'CL=F',     name: 'CRUDE OIL WTI',market: 'CMD', unit: '$/bbl' },
+      { symbol: 'BZ=F',     name: 'BRENT CRUDE',  market: 'CMD', unit: '$/bbl' }
     ];
 
-    const results = await Promise.all(
-      symbols.map(async (s) => {
-        try {
-          const response = await fetch(
-            `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s.symbol)}?interval=1d&range=5d`,
-            { headers: { 'User-Agent': 'Mozilla/5.0' } }
-          );
-          const data = await response.json();
-          const result = data.chart?.result?.[0];
-          if (result) {
-            const meta = result.meta;
-            const prevClose = meta.chartPreviousClose || meta.previousClose;
-            const price = meta.regularMarketPrice;
-            const change = price - prevClose;
-            const changePercent = (change / prevClose) * 100;
-            return {
-              ...s,
-              price: price.toFixed(2),
-              change: change.toFixed(2),
-              changePercent: changePercent.toFixed(2),
-              status: 'live'
-            };
-          }
-          throw new Error('No data');
-        } catch {
-          return { ...s, price: '--', change: '--', changePercent: '--', status: 'unavailable' };
-        }
-      })
-    );
+    const results = await Promise.all(allSymbols.map(fetchYahooSymbol));
 
-    const indianMarket = results.filter(r => r.market === 'IN');
-    const usMarket = results.filter(r => r.market === 'US');
+    const indian      = results.filter(r => r.market === 'IN');
+    const us          = results.filter(r => r.market === 'US');
+    const asian       = results.filter(r => r.market === 'AS');
+    const middleEast  = results.filter(r => r.market === 'ME');
+    const commodities = results.filter(r => r.market === 'CMD');
 
-    // Market risk assessment
-    const avgChange = results
-      .filter(r => r.status === 'live')
-      .reduce((sum, r) => sum + parseFloat(r.changePercent || 0), 0) / (results.filter(r => r.status === 'live').length || 1);
+    // Commodity risk: fuel (crude) up > 3% = HIGH, gold up > 2% = MEDIUM (safe-haven buying = fear)
+    const crudeLive = commodities.find(c => c.symbol === 'CL=F' && c.status === 'live');
+    const goldLive  = commodities.find(c => c.symbol === 'GC=F' && c.status === 'live');
+    let cmdRisk = 'LOW';
+    if (crudeLive && parseFloat(crudeLive.changePercent) > 3) cmdRisk = 'HIGH';
+    else if (crudeLive && parseFloat(crudeLive.changePercent) > 1.5) cmdRisk = 'MEDIUM';
+    else if (goldLive && parseFloat(goldLive.changePercent) > 2) cmdRisk = 'MEDIUM';
 
-    let risk_level = 'LOW';
-    if (avgChange < -2) risk_level = 'HIGH';
-    else if (avgChange < -0.5) risk_level = 'MEDIUM';
-
-    res.json({ indian: indianMarket, us: usMarket, risk_level });
+    res.json({
+      indian, us, asian, middleEast, commodities,
+      risk_level:    marketRisk([...indian, ...us]),
+      asianRisk:     marketRisk(asian),
+      meRisk:        marketRisk(middleEast),
+      commodityRisk: cmdRisk
+    });
   } catch (error) {
     console.error('Market API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch market data' });
@@ -296,46 +321,155 @@ app.post('/api/sales/reset', (req, res) => {
   res.json({ success: true, sales: salesData });
 });
 
-// ============ OVERALL RISK SUMMARY ============
+// ============ FINANCIAL TRACKER ============
+app.get('/api/financial', (req, res) => {
+  const onlineSales = salesData.online.current;
+  const offlineSales = salesData.offline.current;
+  const totalRevenue = onlineSales + offlineSales + financialData.sponsorEarnings;
+  const totalCosts = financialData.artistCost + financialData.productionCost + financialData.marketingExpenses + financialData.flightExpenses;
+  const netPnL = totalRevenue - totalCosts;
+  const coverageRatio = totalCosts > 0 ? (totalRevenue / totalCosts) * 100 : 100;
+
+  let risk_level = 'LOW';
+  if (totalCosts > 0) {
+    if (coverageRatio < 50) risk_level = 'HIGH';
+    else if (coverageRatio < 80) risk_level = 'MEDIUM';
+  }
+
+  res.json({ ...financialData, onlineSales, offlineSales, totalRevenue, totalCosts, netPnL, coverageRatio, risk_level });
+});
+
+app.post('/api/financial', (req, res) => {
+  const { field, amount } = req.body;
+  const allowed = ['artistCost', 'productionCost', 'marketingExpenses', 'flightExpenses', 'sponsorEarnings'];
+  if (!allowed.includes(field)) return res.status(400).json({ error: 'Invalid field' });
+  if (typeof amount !== 'number' || amount < 0) return res.status(400).json({ error: 'Amount must be a positive number' });
+  financialData[field] = amount;
+  res.json({ success: true, financial: financialData });
+});
+
+// ============ FLIGHT FARE TREND ============
+function buildRouteFares(basePrices) {
+  // basePrices: { far, nearish, close, near, eventDay }
+  const eventDate = new Date('2026-04-05');
+  const fares = [];
+  for (let i = -8; i <= 8; i++) {
+    const d = new Date(eventDate);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    const absDiff = Math.abs(i);
+    let price;
+    if (absDiff === 0) price = basePrices.eventDay;
+    else if (absDiff === 1) price = basePrices.near;
+    else if (absDiff === 2) price = basePrices.close;
+    else if (absDiff <= 4) price = basePrices.nearish;
+    else price = basePrices.far + Math.round(Math.random() * basePrices.farVariance);
+    fares.push({ date: dateStr, price: Math.round(price), isEventDay: i === 0 });
+  }
+  const eventDayFare = fares.find(f => f.isEventDay).price;
+  const avgFare = Math.round(fares.reduce((s, f) => s + f.price, 0) / fares.length);
+  const surgeRatio = (eventDayFare / avgFare).toFixed(2);
+  return { fares, eventDayFare, avgFare, surgeRatio };
+}
+
+app.get('/api/flights', (req, res) => {
+  // GAU → BLR (Guwahati to Bengaluru): longer route, higher base fares
+  const gauData = buildRouteFares({ far: 5500, farVariance: 1200, nearish: 7800, close: 10500, near: 13000, eventDay: 15500 });
+  // BOM → BLR (Mumbai to Bengaluru): short route, lower base fares
+  const bomData = buildRouteFares({ far: 3000, farVariance: 800, nearish: 4800, close: 7200, near: 9500, eventDay: 11800 });
+
+  // Overall risk = worst of the two routes' surge ratios
+  const maxSurge = Math.max(parseFloat(gauData.surgeRatio), parseFloat(bomData.surgeRatio));
+  let risk_level = 'LOW';
+  if (maxSurge > 2.5) risk_level = 'HIGH';
+  else if (maxSurge > 1.8) risk_level = 'MEDIUM';
+
+  res.json({
+    routes: [
+      { id: 'gau', label: 'GAU → BLR', origin: 'Guwahati', ...gauData },
+      { id: 'bom', label: 'BOM → BLR', origin: 'Mumbai',   ...bomData }
+    ],
+    risk_level,
+    note: 'Estimated fare trend — connect a Skyscanner/Amadeus API key for live data'
+  });
+});
+
+// ============ OVERALL RISK SUMMARY (Weighted Algorithm) ============
+// Weights: weather=20%, IN markets=8%, US markets=5%, Asian=4%, ME=3%,
+//          commodities=5%, concerts=12%, sales=13%, financials=10%,
+//          flights=5%, war=8%, lpg=4%, faretrend=3%
 app.get('/api/risk-summary', async (req, res) => {
   try {
-    // Aggregate risk from all sources
-    const [weather, markets, warNews, lpgNews, concertNews] = await Promise.all([
+    const [weather, markets, warNews, lpgNews, concertNews, flights, financial] = await Promise.all([
       fetch(`http://localhost:${PORT}/api/weather`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
-      fetch(`http://localhost:${PORT}/api/markets`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
+      fetch(`http://localhost:${PORT}/api/markets`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN', indian: [], us: [], asian: [], middleEast: [], commodities: [], asianRisk: 'UNKNOWN', meRisk: 'UNKNOWN', commodityRisk: 'UNKNOWN' })),
       fetch(`http://localhost:${PORT}/api/news/war`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
       fetch(`http://localhost:${PORT}/api/news/lpg`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
-      fetch(`http://localhost:${PORT}/api/news/concerts`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' }))
+      fetch(`http://localhost:${PORT}/api/news/concerts`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
+      fetch(`http://localhost:${PORT}/api/flights`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' })),
+      fetch(`http://localhost:${PORT}/api/financial`).then(r => r.json()).catch(() => ({ risk_level: 'UNKNOWN' }))
     ]);
 
-    const riskValues = { LOW: 1, MEDIUM: 2, HIGH: 3, UNKNOWN: 0 };
-    const risks = [weather.risk_level, markets.risk_level, warNews.risk_level, lpgNews.risk_level, concertNews.risk_level];
-    const avgRisk = risks.reduce((sum, r) => sum + (riskValues[r] || 0), 0) / risks.filter(r => r !== 'UNKNOWN').length;
+    const rv = { LOW: 1, MEDIUM: 2, HIGH: 3, UNKNOWN: null };
+
+    const inMarketRisk  = marketRisk(markets.indian || []);
+    const usMarketRisk  = marketRisk(markets.us || []);
+    const asianRisk     = markets.asianRisk || marketRisk(markets.asian || []);
+    const meRisk        = markets.meRisk    || marketRisk(markets.middleEast || []);
+    const commodityRisk = markets.commodityRisk || 'LOW';
 
     // Sales risk
+    const daysToEvent = Math.max(0, Math.ceil((new Date('2026-04-05') - new Date()) / (1000 * 60 * 60 * 24)));
     const onlinePct = (salesData.online.current / salesData.online.target) * 100;
     const offlinePct = (salesData.offline.current / salesData.offline.target) * 100;
-    const daysToEvent = Math.ceil((new Date('2026-04-05') - new Date()) / (1000 * 60 * 60 * 24));
     let salesRisk = 'LOW';
     if (daysToEvent > 0) {
-      const expectedPct = ((30 - daysToEvent) / 30) * 100; // assume 30-day sales window
+      const expectedPct = Math.min(100, ((30 - daysToEvent) / 30) * 100);
       if (onlinePct < expectedPct * 0.5 || offlinePct < expectedPct * 0.5) salesRisk = 'HIGH';
       else if (onlinePct < expectedPct * 0.75 || offlinePct < expectedPct * 0.75) salesRisk = 'MEDIUM';
     }
 
-    let overall = 'LOW';
-    if (avgRisk > 2.2 || salesRisk === 'HIGH') overall = 'HIGH';
-    else if (avgRisk > 1.5 || salesRisk === 'MEDIUM') overall = 'MEDIUM';
+    // Weighted score
+    const weighted = [
+      { key: 'weather',    level: weather.risk_level,    w: 0.20 },
+      { key: 'inMarkets',  level: inMarketRisk,           w: 0.08 },
+      { key: 'usMarkets',  level: usMarketRisk,           w: 0.05 },
+      { key: 'asian',      level: asianRisk,              w: 0.04 },
+      { key: 'me',         level: meRisk,                 w: 0.03 },
+      { key: 'commodities',level: commodityRisk,          w: 0.05 },
+      { key: 'concerts',   level: concertNews.risk_level, w: 0.12 },
+      { key: 'sales',      level: salesRisk,              w: 0.13 },
+      { key: 'finance',    level: financial.risk_level,   w: 0.10 },
+      { key: 'flights',    level: flights.risk_level,     w: 0.05 },
+      { key: 'war',        level: warNews.risk_level,     w: 0.08 },
+      { key: 'lpg',        level: lpgNews.risk_level,     w: 0.04 },
+      { key: 'faretrend',  level: flights.risk_level,     w: 0.03 }
+    ];
+
+    let totalWeight = 0, weightedScore = 0;
+    weighted.forEach(item => {
+      const score = rv[item.level];
+      if (score !== null) { weightedScore += score * item.w; totalWeight += item.w; }
+    });
+    const finalScore = totalWeight > 0 ? weightedScore / totalWeight : 1;
+    const overall = finalScore > 2.2 ? 'HIGH' : finalScore > 1.5 ? 'MEDIUM' : 'LOW';
 
     res.json({
       overall,
+      score: finalScore.toFixed(2),
       breakdown: {
         weather: weather.risk_level,
-        markets: markets.risk_level,
+        inMarkets: inMarketRisk,
+        usMarkets: usMarketRisk,
+        asian: asianRisk,
+        me: meRisk,
+        commodities: commodityRisk,
         war: warNews.risk_level,
         lpg: lpgNews.risk_level,
         concerts: concertNews.risk_level,
-        sales: salesRisk
+        sales: salesRisk,
+        finance: financial.risk_level,
+        flights: flights.risk_level
       },
       daysToEvent
     });

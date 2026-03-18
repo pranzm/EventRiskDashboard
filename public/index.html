@@ -23,13 +23,29 @@
     </div>
   </header>
 
+  <!-- Risk Breakdown Bar -->
+  <div class="risk-breakdown-bar" id="riskBreakdownBar">
+    <div class="rbd-item"><span class="rbd-label">Weather</span><span class="risk-badge small" id="rb-weather">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">IN Markets</span><span class="risk-badge small" id="rb-markets">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">US Markets</span><span class="risk-badge small" id="rb-us">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Asian</span><span class="risk-badge small" id="rb-asian">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Mid East</span><span class="risk-badge small" id="rb-me">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Gold/Oil</span><span class="risk-badge small" id="rb-cmd">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Flights</span><span class="risk-badge small" id="rb-flights">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Sales</span><span class="risk-badge small" id="rb-sales">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Financials</span><span class="risk-badge small" id="rb-finance">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">War News</span><span class="risk-badge small" id="rb-war">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">LPG</span><span class="risk-badge small" id="rb-lpg">--</span></div>
+    <div class="rbd-item"><span class="rbd-label">Concerts</span><span class="risk-badge small" id="rb-concerts">--</span></div>
+  </div>
+
   <!-- Dashboard Grid -->
   <main class="dashboard">
 
-    <!-- Weather Widget -->
+    <!-- ===== ROW 1: WEATHER + MARKETS ===== -->
     <section class="widget weather-widget" id="weatherWidget">
       <div class="widget-header">
-        <h2>Weather Forecast - Bengaluru</h2>
+        <h2>Weather Forecast — Bengaluru</h2>
         <span class="risk-badge small" id="weatherRisk">--</span>
       </div>
       <div class="widget-body" id="weatherBody">
@@ -37,7 +53,6 @@
       </div>
     </section>
 
-    <!-- Indian Market Widget -->
     <section class="widget market-widget" id="indianMarketWidget">
       <div class="widget-header">
         <h2>Indian Markets</h2>
@@ -48,7 +63,6 @@
       </div>
     </section>
 
-    <!-- US Market Widget -->
     <section class="widget market-widget" id="usMarketWidget">
       <div class="widget-header">
         <h2>US Markets</h2>
@@ -59,49 +73,57 @@
       </div>
     </section>
 
-    <!-- War News Widget -->
-    <section class="widget news-widget" id="warWidget">
+    <section class="widget market-widget" id="asianMarketWidget">
       <div class="widget-header">
-        <h2>Global Conflict News</h2>
-        <span class="risk-badge small" id="warRisk">--</span>
+        <h2>Asian Markets</h2>
+        <span class="risk-badge small" id="asianMarketRisk">--</span>
       </div>
-      <div class="widget-body" id="warBody">
-        <div class="loading">Loading news...</div>
+      <div class="widget-body" id="asianMarketBody">
+        <div class="loading">Loading market data...</div>
       </div>
     </section>
 
-    <!-- LPG News Widget -->
-    <section class="widget news-widget" id="lpgWidget">
+    <section class="widget market-widget" id="meMarketWidget">
       <div class="widget-header">
-        <h2>LPG News - India</h2>
-        <span class="risk-badge small" id="lpgRisk">--</span>
+        <h2>Middle East Markets</h2>
+        <span class="risk-badge small" id="meMarketRisk">--</span>
       </div>
-      <div class="widget-body" id="lpgBody">
-        <div class="loading">Loading news...</div>
+      <div class="widget-body" id="meMarketBody">
+        <div class="loading">Loading market data...</div>
       </div>
     </section>
 
-    <!-- Concert Cancellation Widget -->
-    <section class="widget news-widget" id="concertWidget">
+    <section class="widget market-widget" id="commoditiesWidget">
       <div class="widget-header">
-        <h2>Bengaluru Concert Cancellations</h2>
-        <span class="risk-badge small" id="concertRisk">--</span>
+        <h2>Gold &amp; Fuel Prices</h2>
+        <span class="risk-badge small" id="commodityRisk">--</span>
       </div>
-      <div class="widget-body" id="concertBody">
-        <div class="loading">Loading news...</div>
+      <div class="widget-body" id="commoditiesBody">
+        <div class="loading">Loading commodity data...</div>
       </div>
     </section>
 
-    <!-- Online Sales Tracker -->
+    <!-- ===== ROW 2: FLIGHT FARE TREND ===== -->
+    <section class="widget flight-widget" id="flightWidget">
+      <div class="widget-header">
+        <h2>Flight Fares — GAU→BLR &amp; BOM→BLR</h2>
+        <span class="risk-badge small" id="flightRisk">--</span>
+      </div>
+      <div class="widget-body" id="flightBody">
+        <div class="loading">Loading flight data...</div>
+      </div>
+    </section>
+
+    <!-- ===== ROW 3: SALES TRACKERS ===== -->
     <section class="widget sales-widget" id="onlineSalesWidget">
       <div class="widget-header">
         <h2>Online Sales Tracker</h2>
-        <span class="target-label">Target: 50,00,000</span>
+        <span class="target-label">Target: ₹50,00,000</span>
       </div>
       <div class="widget-body">
         <div class="sales-display">
           <div class="sales-amount-row">
-            <div class="sales-amount" id="onlineAmount">0</div>
+            <div class="sales-amount" id="onlineAmount">₹0</div>
             <div class="sales-actions">
               <button class="btn-edit" onclick="editSales('online')" title="Edit total">Edit</button>
               <button class="btn-reset" onclick="resetSales('online')" title="Reset to zero">Reset</button>
@@ -122,16 +144,15 @@
       </div>
     </section>
 
-    <!-- Offline Sales Tracker -->
     <section class="widget sales-widget" id="offlineSalesWidget">
       <div class="widget-header">
         <h2>Offline Sales Tracker</h2>
-        <span class="target-label">Target: 10,00,000</span>
+        <span class="target-label">Target: ₹10,00,000</span>
       </div>
       <div class="widget-body">
         <div class="sales-display">
           <div class="sales-amount-row">
-            <div class="sales-amount" id="offlineAmount">0</div>
+            <div class="sales-amount" id="offlineAmount">₹0</div>
             <div class="sales-actions">
               <button class="btn-edit" onclick="editSales('offline')" title="Edit total">Edit</button>
               <button class="btn-reset" onclick="resetSales('offline')" title="Reset to zero">Reset</button>
@@ -149,6 +170,149 @@
             <button class="btn-add" onclick="addSales('offline')">+ Add</button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== ROW 4: FINANCIALS ===== -->
+    <section class="widget finance-widget" id="artistCostWidget">
+      <div class="widget-header">
+        <h2>Main Artist Cost</h2>
+        <span class="finance-type-label expense">EXPENSE</span>
+      </div>
+      <div class="widget-body">
+        <div class="finance-amount expense-color" id="artistCostAmount">₹0</div>
+        <div class="finance-input-group">
+          <div class="input-row">
+            <input type="number" id="artistCostInput" placeholder="Enter cost in rupees" min="0">
+            <button class="btn-set" onclick="setFinancial('artistCost')">Set</button>
+          </div>
+          <div class="finance-actions">
+            <button class="btn-edit" onclick="editFinancial('artistCost', 'Main Artist Cost')">Edit</button>
+            <button class="btn-reset" onclick="resetFinancial('artistCost')">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="widget finance-widget" id="productionCostWidget">
+      <div class="widget-header">
+        <h2>Production Cost</h2>
+        <span class="finance-type-label expense">EXPENSE</span>
+      </div>
+      <div class="widget-body">
+        <div class="finance-amount expense-color" id="productionCostAmount">₹0</div>
+        <div class="finance-input-group">
+          <div class="input-row">
+            <input type="number" id="productionCostInput" placeholder="Enter cost in rupees" min="0">
+            <button class="btn-set" onclick="setFinancial('productionCost')">Set</button>
+          </div>
+          <div class="finance-actions">
+            <button class="btn-edit" onclick="editFinancial('productionCost', 'Production Cost')">Edit</button>
+            <button class="btn-reset" onclick="resetFinancial('productionCost')">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="widget finance-widget" id="sponsorWidget">
+      <div class="widget-header">
+        <h2>Sponsor Earnings</h2>
+        <span class="finance-type-label income">INCOME</span>
+      </div>
+      <div class="widget-body">
+        <div class="finance-amount income-color" id="sponsorAmount">₹0</div>
+        <div class="finance-input-group">
+          <div class="input-row">
+            <input type="number" id="sponsorInput" placeholder="Enter amount in rupees" min="0">
+            <button class="btn-set" onclick="setFinancial('sponsorEarnings')">Set</button>
+          </div>
+          <div class="finance-actions">
+            <button class="btn-edit" onclick="editFinancial('sponsorEarnings', 'Sponsor Earnings')">Edit</button>
+            <button class="btn-reset" onclick="resetFinancial('sponsorEarnings')">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="widget finance-widget" id="marketingWidget">
+      <div class="widget-header">
+        <h2>Marketing Expenses</h2>
+        <span class="finance-type-label expense">EXPENSE</span>
+      </div>
+      <div class="widget-body">
+        <div class="finance-amount expense-color" id="marketingAmount">₹0</div>
+        <div class="finance-input-group">
+          <div class="input-row">
+            <input type="number" id="marketingInput" placeholder="Enter cost in rupees" min="0">
+            <button class="btn-set" onclick="setFinancial('marketingExpenses')">Set</button>
+          </div>
+          <div class="finance-actions">
+            <button class="btn-edit" onclick="editFinancial('marketingExpenses', 'Marketing Expenses')">Edit</button>
+            <button class="btn-reset" onclick="resetFinancial('marketingExpenses')">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="widget finance-widget" id="flightExpWidget">
+      <div class="widget-header">
+        <h2>Flight Expenses</h2>
+        <span class="finance-type-label expense">EXPENSE</span>
+      </div>
+      <div class="widget-body">
+        <div class="finance-amount expense-color" id="flightExpAmount">₹0</div>
+        <div class="finance-input-group">
+          <div class="input-row">
+            <input type="number" id="flightExpInput" placeholder="Enter cost in rupees" min="0">
+            <button class="btn-set" onclick="setFinancial('flightExpenses')">Set</button>
+          </div>
+          <div class="finance-actions">
+            <button class="btn-edit" onclick="editFinancial('flightExpenses', 'Flight Expenses')">Edit</button>
+            <button class="btn-reset" onclick="resetFinancial('flightExpenses')">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Financial P&L Summary -->
+    <section class="widget pnl-widget" id="pnlWidget">
+      <div class="widget-header">
+        <h2>P&amp;L Summary</h2>
+        <span class="risk-badge small" id="financeRisk">--</span>
+      </div>
+      <div class="widget-body" id="pnlBody">
+        <div class="loading">Calculating...</div>
+      </div>
+    </section>
+
+    <!-- ===== ROW 5: NEWS (BOTTOM) ===== -->
+    <section class="widget news-widget" id="warWidget">
+      <div class="widget-header">
+        <h2>Global Conflict News</h2>
+        <span class="risk-badge small" id="warRisk">--</span>
+      </div>
+      <div class="widget-body" id="warBody">
+        <div class="loading">Loading news...</div>
+      </div>
+    </section>
+
+    <section class="widget news-widget" id="lpgWidget">
+      <div class="widget-header">
+        <h2>LPG News — India</h2>
+        <span class="risk-badge small" id="lpgRisk">--</span>
+      </div>
+      <div class="widget-body" id="lpgBody">
+        <div class="loading">Loading news...</div>
+      </div>
+    </section>
+
+    <section class="widget news-widget" id="concertWidget">
+      <div class="widget-header">
+        <h2>Bengaluru Concert Cancellations</h2>
+        <span class="risk-badge small" id="concertRisk">--</span>
+      </div>
+      <div class="widget-body" id="concertBody">
+        <div class="loading">Loading news...</div>
       </div>
     </section>
 

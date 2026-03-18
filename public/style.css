@@ -312,6 +312,12 @@ body {
 .negative { color: var(--accent-red); }
 .neutral { color: var(--text-muted); }
 
+.market-unit {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 /* ============ NEWS ============ */
 .news-item {
   padding: 12px 0;
@@ -563,6 +569,270 @@ body {
     gap: 6px;
     text-align: center;
   }
+}
+
+/* ============ RISK BREAKDOWN BAR ============ */
+.risk-breakdown-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 10px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.rbd-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rbd-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ============ FLIGHT FARE CHART ============ */
+.flight-widget {
+  grid-column: 1 / -1;
+}
+
+.flight-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.flight-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flight-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.flight-stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.flight-stat-value.surge {
+  color: var(--accent-red);
+}
+
+.fare-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.fare-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+  flex: 1;
+}
+
+.fare-bar-wrapper.event-day-col .fare-date-label {
+  color: var(--accent-yellow);
+  font-weight: 700;
+}
+
+.fare-price-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.fare-bar-track {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.fare-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s ease;
+}
+
+.fare-bar.low-bar { background: rgba(52, 211, 153, 0.6); }
+.fare-bar.mid-bar { background: rgba(251, 191, 36, 0.6); }
+.fare-bar.high-bar { background: rgba(251, 146, 60, 0.7); }
+.fare-bar.event-day-bar { background: var(--accent-red); }
+
+.fare-date-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.routes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.route-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.route-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-yellow);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+.route-origin {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ============ FINANCIALS ============ */
+.finance-widget {
+  min-height: 200px;
+}
+
+.finance-amount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.expense-color { color: var(--accent-red); }
+.income-color { color: var(--accent-green); }
+
+.finance-type-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.finance-type-label.expense {
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--accent-red);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.finance-type-label.income {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.finance-input-group {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.finance-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ============ P&L SUMMARY ============ */
+.pnl-widget {
+  grid-column: span 1;
+}
+
+.pnl-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pnl-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pnl-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pnl-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pnl-sub .pnl-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding-left: 10px;
+}
+
+.pnl-sub .pnl-value {
+  font-size: 0.85rem;
+}
+
+.pnl-section-total .pnl-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pnl-section-total .pnl-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.pnl-total .pnl-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pnl-total .pnl-value {
+  font-size: 1.2rem;
+}
+
+.pnl-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.pnl-coverage {
+  margin-top: 4px;
+}
+
+.pnl-coverage-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
 }
 
 /* ============ ANIMATIONS ============ */
